@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <math.h> 
+#include <stdlib.h> 
+
+
+double gauss(int n, int m, double *a) 
+{
+    int i, j, k, im;
+    double det=1.0;
+    i = 0; 
+    j = 0;
+    while (i < n && j < m) 
+    {
+        for (k = i; k < n; k++)
+            if (fabs(a[k*m + j]) > 0.00001) 
+                im = k;
+        if (im != i)
+        {
+            for (k = j; k < m; ++k) 
+            {
+                double r = a[i*m + k];
+                a[i*m + k] = a[im*m + k];
+                a[im*m + k] = r;
+            }
+            det=det*(-1.0);
+        }
+        for (k = i+1; k < n; ++k) 
+        {
+            double kf = (a[k*m + j] / a[i*m + j]);
+            a[k*m + j] = 0.0;
+            for (im = j+1; im < m; im++)
+                a[k*m + im] -= kf * a[i*m + im];
+        }
+        ++i; 
+        ++j;
+    }
+    return det;
+}
+
+int main() 
+{
+    int m, n, i, j;
+    double det;
+    printf("Введите размеры матрицы: количество строк и стодбцов\n");
+    scanf("%d%d", &n, &m);
+    double *a = (double*) malloc(n * m * sizeof(double));
+    printf("Введите элементы матрицы\n");
+    for (i = 0; i < n; i++) 
+    {
+        for (j = 0; j < m; j++) 
+        {
+            scanf("%lf", &(a[i*m + j]));
+        }
+    }
+    if (m==n)
+    {
+        det=gauss(n, m, a);
+        for (i = 0; i < n; ++i) 
+            det=det*(a[i*m + i]);
+        printf("Определитель матрицы = %.3lf\n", det);
+    }
+    else printf("Для неквадратной матрицы определитель не определен");
+    free(a);
+    return 0;
+}
+
